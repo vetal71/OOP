@@ -6,6 +6,8 @@
 program.cpp
 */
 
+#define _CRT_SECURE_NOT_WARNING
+
 #include <iostream>
 #include <string.h>
 #include "conio.h"  // для вызова _getch()
@@ -37,7 +39,7 @@ public:
 	Pairs& operator=(const Pairs&);                        // копирование пар
 	Pairs& operator+=(const Pairs&);                       // добавление пар
 	Pairs& operator+=(const Pair&);                        // добавление новой пары
-	char * operator[](int);                                // получение имени по значению
+	char * operator[](const int);                          // получение имени по значению
 	int operator[](const char *);                          // получение значения по имени
 	friend ostream& operator<<(ostream& os, const Pairs&); // вывод
 };
@@ -51,16 +53,20 @@ Pair& Pair::operator=(int _value)
 
 Pair& Pair::operator=(const char* _name)
 {
-	strcpy_s(name, sizeof(_name), _name); 
+	name = new char[strlen(_name) + 1];
+	strcpy(name, _name);
+	
 	return *this;
 }
 
 istream& operator>>(istream& is, Pair& _p)
 {
-	char _name[15] = "";
+	// вспомагательные переменные
+	is.clear();
+	char * _name = new char[15];
 	int _value;
 	cout << "Enter new name: ";
-	is.getline(_name, 15);	
+	is >> _name;	
 	cout << "Enter new value:";
 	is >> _value;	
 
@@ -72,8 +78,6 @@ istream& operator>>(istream& is, Pair& _p)
 
 ostream& operator<<(ostream& os, const Pair& _p)
 {
-	char * _name = "";
-	_name = _p.name;
 	os << _p.name << " = " << _p.value << endl;
 	return os;
 }
@@ -97,13 +101,19 @@ Pairs& Pairs::operator=(const Pairs& _p)
 
 // добавление пар
 Pairs& Pairs::operator+=(const Pairs& _p)
-{
-	prs = new Pair[length += _p.length];
+{	
+	Pair * tmp_prs = new Pair[length + _p.length + 1];
 	// копирование пар
 	for (int i = 0; i < length; i++)
 	{
-		prs[i] = _p.prs[i];
+		tmp_prs[i] = prs[i];
 	}
+	for (int i = 0; i < _p.length; i++)
+	{
+		tmp_prs[length + i] = _p.prs[i];
+	}
+	prs = tmp_prs;
+	delete[] tmp_prs;
 	count += _p.count;
 	return *this;
 }
@@ -111,26 +121,32 @@ Pairs& Pairs::operator+=(const Pairs& _p)
 // добавление пары
 Pairs& Pairs::operator+=(const Pair& _p)
 {
-	prs = new Pair[length + 1];
+	Pair * tmp_prs = new Pair[++length];
+	if (count > 0) 
+	{
+		// копирование пар
+		for (int i = 0; i < length; i++)
+		{
+			tmp_prs[i] = prs[i];
+		}
+	}
+	tmp_prs[length - 1] = _p;
+	prs = tmp_prs;
 	count++;
-	prs[count - 1] = _p.name;
-	prs[count - 1] = _p.value;
 	return *this;
 }
 
 // получение имени по значению
-char* Pairs::operator[](int _value)
+char* Pairs::operator[](const int _value)
 {	
-	char * res = "not found";
 	for (int i = 0; i < count; i++)
 	{
 		if (prs[i].value == _value) // нашли искомую пару
 		{
-			strcpy_s(res, sizeof(prs[i].name), prs[i].name);
-			break;
+			return prs[i].name;
 		}
 	}
-	return res;
+	return "not found";
 }
 
 // получение значения по имени
@@ -165,20 +181,51 @@ int main()
 	Pair pair;
 	Pairs pairs;
 
-	// оператор ввода для пары
-	pair.name = "A";
-	pair.value = 1;
-	
+	cout << "Overload operator >> for Pair" << endl;
 	cin >> pair;
 
+	cout << "Overload operator << for Pair" << endl;
 	cout << pair;
 
 	// добавление пары
-	//pairs += pair;
+	cout << "Overload operator += for Pairs (append Pair)" << endl;
+	pairs += pair;
 
-	//cout << pairs;
+	cout << "Overload operator << for Pairs" << endl;
+	cout << pairs;
 	
-	// ожидание ввода чтоб не закрылось окно
+	Pairs pairs1;
+	cout << "Overload operator += for Pairs (append Pairs)" << endl;
+	pairs1 += pairs;
+	cout << pairs1;
+
+	Pairs pairs2;
+	cout << "Overload operator = for Pairs (copy Pairs)" << endl;
+	pairs2 = pairs;
+	cout << pairs2;
+
+	Pair pair1, pair2;
+	cout << "Overload operator = for Pair" << endl;
+	pair1 = "Jack";
+	pair1 = 3000;
+	pairs2 += pair1;
+	cout << pairs2;
+	
+	cin >> pair2;
+	pairs2 += pair2;
+	
+	int _value;
+	cout << "Enter value for search: ";
+	cin >> _value;	
+	cout << "Found name: " << pairs2[_value] << endl;
+
+	char * _name = new char[15];	
+	cout << "Enter name for search: ";
+	cin >> _name;
+	_value = pairs2[_name];
+	cout << "Found value: " << _value << endl;
+
+	// ожидание ввода чтобы не закрылось окно
 	_getch();
 
 	return 0;
