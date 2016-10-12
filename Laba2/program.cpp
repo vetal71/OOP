@@ -87,7 +87,7 @@ void Pairs::SetValue(char* _name, int _value)
 				tmp_prs[i].value = prs[i].value;
 			}
 			prs = tmp_prs;
-			delete[] tmp_prs;
+			//delete[] tmp_prs;
 		}
 		// увеличим счетчик счетчик пар
 		count++;
