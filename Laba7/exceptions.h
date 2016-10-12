@@ -24,6 +24,7 @@ public:
 class OpenException : public FileException
 {
 public:
+	OpenException(char * fname) : FileException(fname) {};
 	char* Message() override;
 };
 
@@ -31,11 +32,13 @@ public:
 class ReadException : public FileException
 {
 public:
+	ReadException(HANDLE h) : FileException(h) {};
 	char* Message() override;
 };
 //ошибка записи
 class WriteException : public FileException
 {
 public:
+	WriteException(HANDLE h) : FileException(h) {};
 	char* Message() override;
 };

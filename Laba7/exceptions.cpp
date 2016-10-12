@@ -11,10 +11,13 @@ FileException::FileException(HANDLE hf)
 }
 
 char* FileException::Message()
-{
-	char * err = "";
-	strcat_s(err, sizeof err, "Undefined file exception error. File: ");
-	strcat_s(err, sizeof err, filename);
+{	
+	const char * s_exc = "Undefined file exception error. File: ";
+	const char * fname = GetFileName();
+
+	char *err = new char[strlen(s_exc) + strlen(fname) + 1];
+	strcpy(err, s_exc);
+	strcat(err, fname);
 	return err;
 }
 
@@ -25,24 +28,33 @@ const char* FileException::GetFileName() const
 
 char* CreateException::Message()
 {
-	char * err = "";
-	strcat_s(err, sizeof err, "Create file exception error. File: ");
-	strcat_s(err, sizeof err, GetFileName());
+	const char * s_exc = "Create file exception error. File: ";	
+	const char * fname = GetFileName();
+
+	char *err = new char[strlen(s_exc) + strlen(fname) + 1];
+	strcpy(err, s_exc);
+	strcat(err, fname);	
+	return err;	
+}
+
+
+char* OpenException::Message()
+{
+	const char * s_exc = "Open file exception error. File: ";
+	const char * fname = GetFileName();
+
+	char *err = new char[strlen(s_exc) + strlen(fname) + 1];
+	strcpy(err, s_exc);
+	strcat(err, fname);
 	return err;
 }
 
 char* ReadException::Message()
 {
-	char * err = "";
-	strcat_s(err, sizeof err, "Read file exception error. File: ");
-	strcat_s(err, sizeof err, GetFileName());
-	return err;
+	return "Read file exception error.";		
 }
 
 char* WriteException::Message()
 {
-	char * err = "";
-	strcat_s(err, sizeof err, "Write file exception error. File: ");
-	strcat_s(err, sizeof err, GetFileName());
-	return err;
+	return "Write file exception error.";
 }
