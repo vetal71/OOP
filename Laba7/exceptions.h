@@ -31,14 +31,18 @@ public:
 //ошибка чтения
 class ReadException : public FileException
 {
+	char * msg;
 public:
-	ReadException(HANDLE h) : FileException(h) {};
+	ReadException(HANDLE h) : FileException(h) { msg = {0}; };
+	ReadException(HANDLE h, char* _msg) : FileException(h) { strcpy_s(msg, sizeof msg, _msg); };
 	char* Message() override;
 };
 //ошибка записи
 class WriteException : public FileException
 {
+	char * msg;
 public:
-	WriteException(HANDLE h) : FileException(h) {};
+	WriteException(HANDLE h) : FileException(h) { msg = { 0 }; };
+	WriteException(HANDLE h, char* _msg) : FileException(h) { strcpy_s(msg, sizeof msg, _msg); };
 	char* Message() override;
 };

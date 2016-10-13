@@ -13,81 +13,74 @@ HANDLE File::CreateFileEx(char* fname)
 	mbstowcs(w_fname, fname, strlen(fname) + 1);
 	LPWSTR ptr = w_fname;
 
-	try
-	{
-		h = CreateFile(ptr,                // name of the write
-			GENERIC_WRITE,          // open for writing
-			0,                      // do not share
-			NULL,                   // default security
-			CREATE_NEW,             // create new file only
-			FILE_ATTRIBUTE_NORMAL,  // normal file
-			NULL);                  // no attr. template
+	
+	h = CreateFile(ptr,          // имя файла
+			GENERIC_WRITE,          // флаг записи
+			0,                      // не расшаривать
+			NULL,                   // безопасность
+			CREATE_ALWAYS,          // всегда создание
+			FILE_ATTRIBUTE_NORMAL,  // нормальный файл
+			NULL);                  // без шаблона
 
-		if (INVALID_HANDLE_VALUE == h) 
-		{
-			throw CreateException(fname);
-		}
-	}
-	catch (CreateException& ce)
+	// генерируем исключение если хэндл не получен
+	if (INVALID_HANDLE_VALUE == h) 
 	{
-		cerr << ce.Message() << endl;
-	}
+		throw CreateException(fname);
+	}	
 	return h;
 }
 
 HANDLE File::OpenFileEx(char* fname)
 {
-	HANDLE h = nullptr;
+	HANDLE h;
 	wchar_t w_fname[256];
 	mbstowcs(w_fname, fname, strlen(fname) + 1);
 	LPWSTR ptr = w_fname;
 
-	try
-	{
-		HANDLE h = CreateFile(ptr, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	h = CreateFile(ptr, 
+			    GENERIC_READ, 
+			    0, 
+			    NULL, 
+			    OPEN_EXISTING, 
+			    FILE_ATTRIBUTE_NORMAL, 
+			    NULL);		
 
-		if (INVALID_HANDLE_VALUE == h)
-		{
-			throw OpenException(fname);
-		}
-	}
-	catch (OpenException& e)
+	// генерируем исключение если хэндл не получен
+	if (INVALID_HANDLE_VALUE == h)
 	{
-		cerr << e.Message() << endl;
+		throw OpenException(fname);
 	}
+	
 	return h;
 }
 
-void File::ReadFileEx(HANDLE hf, void* buf, int count)
+void File::ReadFileE(HANDLE hf, void* buf, int count)
 {
 	DWORD dwTemp;
-	try
+	
+	if (FALSE == ReadFile(hf, buf, count, &dwTemp, NULL))
 	{
-		ReadFile(hf, &buf, count, &dwTemp, NULL);
-		if (count != dwTemp)
-		{
-			throw ReadException(hf);
-		}
+		throw ReadException(hf);
 	}
-	catch(ReadException& e)
+	// проверка соответствия размера записанных данных прочитанным
+	if (count != dwTemp)
 	{
-		cerr << e.Message() << endl;
-	}
+		throw ReadException(hf, "Incorrect data reading...");
+	}	
 }
 
 void File::WriteFileEx(HANDLE hf, void* buf, int count)
 {
 	DWORD dwTemp;
-	try
+
+	if (FALSE == WriteFile(hf, buf, count, &dwTemp, NULL))
 	{
-		WriteFile(hf, buf, count, &dwTemp, NULL);
-		if (count != dwTemp)
-		{
-			throw WriteException(hf);
-		}
+		throw WriteException(hf);
 	}
-	catch (WriteException& e)
+	// проверка соответствия размера записанных данных прочитанным
+	if (count != dwTemp)
 	{
-		cerr << e.Message() << endl;
+		throw WriteException(hf, "Incorrect data writing...");
 	}
+
 }

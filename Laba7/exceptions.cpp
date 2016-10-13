@@ -28,33 +28,33 @@ const char* FileException::GetFileName() const
 
 char* CreateException::Message()
 {
-	const char * s_exc = "Create file exception error. File: ";	
-	const char * fname = GetFileName();
-
-	char *err = new char[strlen(s_exc) + strlen(fname) + 1];
-	strcpy(err, s_exc);
-	strcat(err, fname);	
-	return err;	
+	return "Create file exception error.";	
 }
 
 
 char* OpenException::Message()
 {
-	const char * s_exc = "Open file exception error. File: ";
-	const char * fname = GetFileName();
-
-	char *err = new char[strlen(s_exc) + strlen(fname) + 1];
-	strcpy(err, s_exc);
-	strcat(err, fname);
-	return err;
+	return "Open file exception error.";	
 }
 
 char* ReadException::Message()
 {
-	return "Read file exception error.";		
+	if (strlen(msg) == 0) {
+		return "Read file exception error.";
+	}
+	else
+	{
+		return msg;
+	}
 }
 
 char* WriteException::Message()
 {
-	return "Write file exception error.";
+	if (strlen(msg) == 0) {
+		return "Write file exception error.";
+	}
+	else
+	{
+		return msg;
+	}
 }

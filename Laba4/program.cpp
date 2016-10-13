@@ -1,44 +1,44 @@
 /*
-Eaai?aoi?iay ?aaioa ?4
-Aa?eaio 11
-Eieaniee Eeuy Aeoaeuaae?
+Лабораторная работа №4
+Вариант 11
+Колесник Илья Витальевич
+
 program.cpp
 */
 
 #include <iostream>
 #include <string.h>
-#include "conio.h"  // aey auciaa _getch()
+#include "conio.h"  // для функции _getch()
 
 using namespace std;
 
-/* No?oeoo?a Pair */
 struct Pair
 {
-	char * name;        // eiy
-	int value;          // cia?aiea
+	char * name;        // имя
+	int value;          // значение
 
-	Pair& operator=(int);                                  // onoaiiaeou cia?aiea
-	Pair& operator=(const char *);                         // onoaiiaeou eiy
-	friend istream& operator>>(istream& is, Pair&);        // aaia
-	friend ostream& operator<<(ostream& os, const Pair&);  // auaia
+	Pair& operator=(int);                                  // перегрузка = для значения
+	Pair& operator=(const char *);                         // перегрузка = для имени
+	friend istream& operator>>(istream& is, Pair&);        // ввод
+	friend ostream& operator<<(ostream& os, const Pair&);  // вывод
 };
 
 // Eeann Pairs
 class Pairs
 {
-	Pair * prs;	        // iannea ia?
-	int length;         // ?acia? ianneaa
-	int count;		    // eiee?anoai ia? a ianneaa
+	Pair * prs;	        // массив пар
+	int length;         // длина массива
+	int count;		    // количество элементов в массиве
 
 public:
 	Pairs() { length = 0; count = 0; prs = nullptr; };
 
-	Pairs& operator=(const Pairs&);                        // eiie?iaaiea ia?
-	Pairs& operator+=(const Pairs&);                       // aiaaaeaiea ia?
-	Pairs& operator+=(const Pair&);                        // aiaaaeaiea iiaie ia?u
-	char * operator[](const int);                          // iieo?aiea eiaie ii cia?aie?
-	int operator[](const char *);                          // iieo?aiea cia?aiey ii eiaie
-	friend ostream& operator<<(ostream& os, const Pairs&); // auaia
+	Pairs& operator=(const Pairs&);                        // перегрузка =
+	Pairs& operator+=(const Pairs&);                       // добавление пар
+	Pairs& operator+=(const Pair&);                        // добавление пары
+	char * operator[](const int);                          // взятие индекса по значению
+	int operator[](const char *);                          // взятие индекса по имени
+	friend ostream& operator<<(ostream& os, const Pairs&); // вывод
 };
 
 Pair& Pair::operator=(int _value)
@@ -58,7 +58,7 @@ Pair& Pair::operator=(const char* _name)
 
 istream& operator>>(istream& is, Pair& _p)
 {
-	// aniiiaaaoaeuiua ia?aiaiiua
+	// очистим входной поток
 	is.clear();
 	char * _name = new char[15];
 	int _value;
@@ -79,14 +79,12 @@ ostream& operator<<(ostream& os, const Pair& _p)
 	return os;
 }
 
-// eiie?iaaiea ia?
 Pairs& Pairs::operator=(const Pairs& _p)
 {
-	// i?iaa?ea ia eiie?iaaiea naiiai naay
+	// исключение копирования самого себя
 	if (this != &_p)
 	{
 		prs = new Pair[length = _p.length];
-		// eiie?iaaiea ia?
 		for (int i = 0; i < length; i++)
 		{
 			prs[i] = _p.prs[i];
@@ -96,11 +94,9 @@ Pairs& Pairs::operator=(const Pairs& _p)
 	return *this;
 }
 
-// aiaaaeaiea ia?
 Pairs& Pairs::operator+=(const Pairs& _p)
 {	
-	Pair * tmp_prs = new Pair[length + _p.length + 1];
-	// eiie?iaaiea ia?
+	Pair * tmp_prs = new Pair[length + _p.length + 1];	
 	for (int i = 0; i < length; i++)
 	{
 		tmp_prs[i] = prs[i];
@@ -115,13 +111,11 @@ Pairs& Pairs::operator+=(const Pairs& _p)
 	return *this;
 }
 
-// aiaaaeaiea ia?u
 Pairs& Pairs::operator+=(const Pair& _p)
 {
 	Pair * tmp_prs = new Pair[++length];
 	if (count > 0) 
-	{
-		// eiie?iaaiea ia?
+	{		
 		for (int i = 0; i < length; i++)
 		{
 			tmp_prs[i] = prs[i];
@@ -133,12 +127,11 @@ Pairs& Pairs::operator+=(const Pair& _p)
 	return *this;
 }
 
-// iieo?aiea eiaie ii cia?aie?
 char* Pairs::operator[](const int _value)
 {	
 	for (int i = 0; i < count; i++)
 	{
-		if (prs[i].value == _value) // iaoee eneiio? ia?o
+		if (prs[i].value == _value) 
 		{
 			return prs[i].name;
 		}
@@ -146,13 +139,12 @@ char* Pairs::operator[](const int _value)
 	return "not found";
 }
 
-// iieo?aiea cia?aiey ii eiaie
 int Pairs::operator[](const char* _name)
 {
 	int res = -1;
 	for (int i = 0; i < count; i++)
 	{
-		if (strcmp(prs[i].name, _name) == 0) // iaoee eneiio? ia?o
+		if (strcmp(prs[i].name, _name) == 0) 
 		{
 			res = prs[i].value;
 			break;
@@ -161,7 +153,6 @@ int Pairs::operator[](const char* _name)
 	return res;
 }
 
-// auaia
 ostream& operator<<(ostream& os, const Pairs& _p)
 {
 	os << "------ Array of Pair 'name = value' ------" << endl;
@@ -184,7 +175,6 @@ int main()
 	cout << "Overload operator << for Pair" << endl;
 	cout << pair;
 
-	// aiaaaeaiea ia?u
 	cout << "Overload operator += for Pairs (append Pair)" << endl;
 	pairs += pair;
 
@@ -213,16 +203,14 @@ int main()
 	
 	int _value;
 	cout << "Enter value for search: ";
-	cin >> _value;	
+	cin >> _value;		
 	cout << "Found name: " << pairs2[_value] << endl;
-
 	char * _name = new char[15];	
 	cout << "Enter name for search: ";
 	cin >> _name;
 	_value = pairs2[_name];
 	cout << "Found value: " << _value << endl;
-
-	// i?eaaiea aaiaa ?oiau ia cae?ueinu ieii
+	
 	_getch();
 
 	return 0;
